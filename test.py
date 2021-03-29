@@ -1,9 +1,39 @@
 from pprint import pprint
-sourceCode = "\"test\" *  + -:25*255 star12 test@gmail.com 21-12-2019"
+
+sourceCode = """
+test:{
+to:vasea 
+subject:test 
+time:12-12-2021
+sortby: TIME ASC}
+"""
+sourceCode = sourceCode.lower()
+
+tokenTypes = {
+    "time": "PARAMETER",
+    "name": "PARAMTER",
+    "asc": "SORTVALUE",
+    "desc": "SORTVALUE",
+    "yes": "BOOLVALUE",
+    "no": "BOOLVALUE",
+    "to:": "TO",
+    "from:": "FROM",
+    "cc:": "CC",
+    "forwarded:": "FORWARDED",
+    "read:": "READ",
+    "body:": "BODY",
+    "attachements:": "ATTACHEMENTS",
+    "time:": "TIME",
+    "subject:": "SUBJECT",
+    "sortby:": "SORTBY",
+    "folder:": "FOLDER",
+
+}
 
 sourceCodeChars = list(sourceCode)
 tokenList = []
 i = 0
+
 
 def stringProcess(i):
     temp = sourceCodeChars[i:]
@@ -19,38 +49,54 @@ def intProcess(i):
     string = ""
     type = "INT"
     for char in temp:
-        if char=="-":
-            type="DATE"
-        if char.isnumeric() or char=="-":
-           string += char
+        if char.isnumeric() or char in "-.dy":
+            string += char
         else:
             break
-    return type,string
+    return type, string
 
 
 def alphaProcess(i):
     temp = sourceCodeChars[i:]
     type = "WORD"
-    string=""
-    for char in temp:
-        if char == "@":
-            type = "EMAIL"
-        if char == " ":
+    string = ""
+    for index,char in enumerate(temp):
+
+        if char in " {}" or (char == ":" and not tokenTypes.get(string+":")):
             break
-        string += char
-    return type,string
+
+        if char not in "\n\t":
+            string += char
+
+        if tokenTypes.get(string) and temp[index+1] != ":":
+            type = tokenTypes[string]
+            break
+
+    if string.__contains__("@"):
+        type = "EMAIL"
+
+    return type, string
 
 
 while i < len(sourceCodeChars):
     char = sourceCodeChars[i]
     if char in " \n\t\r":
-        pass
+        i += 1
     elif char == "*":
         tokenList.append(("STAR", "*"))
+        i += 1
     elif char in "+-":
         tokenList.append(("OPERAND", char))
+        i += 1
     elif char == ":":
         tokenList.append(("ASSIGN", char))
+        i += 1
+    elif char == "{":
+        tokenList.append(("LEFTBRACE", char))
+        i += 1
+    elif char == "}":
+        tokenList.append(("RIGHTBRACE", char))
+        i += 1
     elif char == "\"":
         i, char = stringProcess(i + 1)
         tokenList.append(("STRING", char))
@@ -63,6 +109,6 @@ while i < len(sourceCodeChars):
         type, char = alphaProcess(i)
         tokenList.append((type, char))
         i += len(char)
-    i += 1
 
+print(sourceCode)
 pprint(tokenList)
