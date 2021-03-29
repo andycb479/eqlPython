@@ -1,13 +1,14 @@
 from pprint import pprint
 
-sourceCode = """
-test:{
-to:vasea 
-subject:test 
-time:12-12-2021
-sortby: TIME ASC}
-"""
-sourceCode = sourceCode.lower()
+
+def open_file():
+    sourceCode = open("input.txt", "r")
+    data = sourceCode.read()
+    sourceCode.close()
+    return data
+
+
+sourceCode = open_file().lower()
 
 tokenTypes = {
     "time": "PARAMETER",
@@ -63,15 +64,15 @@ def alphaProcess(i):
     temp = sourceCodeChars[i:]
     type = "WORD"
     string = ""
-    for index,char in enumerate(temp):
+    for index, char in enumerate(temp):
 
-        if char in " {}" or (char == ":" and not tokenTypes.get(string+":")):
+        if char in " {}" or (char == ":" and not tokenTypes.get(string + ":")):
             break
 
         if char not in "\n\t":
             string += char
 
-        if tokenTypes.get(string) and temp[index+1] != ":":
+        if tokenTypes.get(string) and temp[index + 1] != ":":
             type = tokenTypes[string]
             break
 
@@ -114,4 +115,5 @@ while i < len(sourceCodeChars):
         i += len(char)
 
 print(sourceCode)
+print()
 pprint(tokenList)
