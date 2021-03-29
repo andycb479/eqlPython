@@ -53,6 +53,9 @@ def intProcess(i):
             string += char
         else:
             break
+
+    if string.__contains__("-"):
+        type = "DATE"
     return type, string
 
 
