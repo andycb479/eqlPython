@@ -5,7 +5,7 @@ subject: "cont de plata" }
 
 filterFisc: {
 from: fisc@yahoo.com
-read: no
+Read: no
 body: amenda taxe
 attachements: 1..2 }
 

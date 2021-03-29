@@ -90,9 +90,9 @@ def alphaProcess(i):
         if char not in "\n\t":
             string += char
 
-        if (tokenTypes.get(string) and temp[index + 1] != ":") or \
-                tokenTypes.get(string) and temp[index + 1] == "(":
-            type = tokenTypes[string]
+        if (tokenTypes.get(string.lower()) and temp[index + 1] != ":") or \
+                tokenTypes.get(string.lower()) and temp[index + 1] == "(":
+            type = tokenTypes[string.lower()]
             break
 
     if string.__contains__("@"):
