@@ -8,7 +8,7 @@ def open_file():
     return data
 
 
-sourceCode = open_file().lower()
+sourceCode = open_file()
 
 tokenTypes = {
     "time": "PARAMETER",
@@ -28,7 +28,15 @@ tokenTypes = {
     "subject:": "SUBJECT",
     "sortby:": "SORTBY",
     "folder:": "FOLDER",
-
+    "print": "PRINT",
+    "+": "OPERAND",
+    "-": "OPERAND",
+    ":": "ASSIGN",
+    "*": "STAR",
+    "{": "LEFTBRACE",
+    "}": "RIGHTBRACE",
+    "(": "LEFTP",
+    ")": "RIGHTP"
 }
 
 sourceCodeChars = list(sourceCode)
@@ -41,9 +49,9 @@ def stringProcess(i):
     string = ""
     for index, char in enumerate(temp):
         if char == "\"":
-            return index + 1, string
+            break
         string += char
-
+    return string
 
 def intProcess(i):
     temp = sourceCodeChars[i:]
@@ -57,6 +65,16 @@ def intProcess(i):
 
     if string.__contains__("-"):
         type = "DATE"
+
+    if string.__contains__(".."):
+        type = "INTERVAL"
+
+    if string.__contains__("y"):
+        type = "YEAR"
+
+    if string.__contains__("d"):
+        type = "DAY"
+
     return type, string
 
 
@@ -66,13 +84,14 @@ def alphaProcess(i):
     string = ""
     for index, char in enumerate(temp):
 
-        if char in " {}" or (char == ":" and not tokenTypes.get(string + ":")):
+        if char in " {}()\n" or (char == ":" and not tokenTypes.get(string + ":")):
             break
 
         if char not in "\n\t":
             string += char
 
-        if tokenTypes.get(string) and temp[index + 1] != ":":
+        if (tokenTypes.get(string) and temp[index + 1] != ":") or \
+                tokenTypes.get(string) and temp[index + 1] == "(":
             type = tokenTypes[string]
             break
 
@@ -86,24 +105,13 @@ while i < len(sourceCodeChars):
     char = sourceCodeChars[i]
     if char in " \n\t\r":
         i += 1
-    elif char == "*":
-        tokenList.append(("STAR", "*"))
-        i += 1
-    elif char in "+-":
-        tokenList.append(("OPERAND", char))
-        i += 1
-    elif char == ":":
-        tokenList.append(("ASSIGN", char))
-        i += 1
-    elif char == "{":
-        tokenList.append(("LEFTBRACE", char))
-        i += 1
-    elif char == "}":
-        tokenList.append(("RIGHTBRACE", char))
+    elif tokenTypes.get(char):
+        tokenList.append((tokenTypes.get(char), char))
         i += 1
     elif char == "\"":
-        i, char = stringProcess(i + 1)
+        char = stringProcess(i + 1)
         tokenList.append(("STRING", char))
+        i += len(char) + 2
     elif char.isnumeric():
         type, char = intProcess(i)
         tokenList.append((type, char))
@@ -113,6 +121,7 @@ while i < len(sourceCodeChars):
         type, char = alphaProcess(i)
         tokenList.append((type, char))
         i += len(char)
+
 
 print(sourceCode)
 print()

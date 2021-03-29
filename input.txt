@@ -1,5 +1,14 @@
-test:{
-to:vasea
-subject:test
-time:12-12-2021
-sortby: TIME ASC}
+filterOrange: {
+to: orange@gmail.com
+time: 29-01-2021*
+subject: "cont de plata" }
+
+filterFisc: {
+from: fisc@yahoo.com
+read: no
+body: amenda taxe
+attachements: 1..2 }
+
+filterAll: filterOrange + filterFisc
+
+print(filterOrange)
