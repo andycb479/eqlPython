@@ -23,7 +23,7 @@ tokenTypes = {
     "forwarded:": "FORWARDED",
     "read:": "READ",
     "body:": "BODY",
-    "attachements:": "ATTACHEMENTS",
+    "attachments:": "ATTACHMENTS",
     "time:": "TIME",
     "subject:": "SUBJECT",
     "sortby:": "SORTBY",
