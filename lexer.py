@@ -20,7 +20,7 @@ tokenTypes = {
     "to:": "TO",  # t
     "from:": "FROM",  # f
     "cc:": "CC",  # c
-    "forwarded:": "FORWARDED",  # f
+    "forwarded:": "FORWARDED",  # ș
     "read:": "READ",  # r
     "body:": "BODY",  # y
     "attachments:": "ATTACHMENTS",  # a
