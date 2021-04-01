@@ -1,8 +1,5 @@
 from pprint import pprint
 
-
-# Function for opening the file input.txt
-# and storing it's content in sourceCode
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
@@ -10,38 +7,35 @@ def open_file():
     return data
 
 
-# Get source code from file
 sourceCode = open_file()
 
-
-# Declaring the tokenTypes - terminal elements
 tokenTypes = {
-    "time": "PARAMETER",
-    "name": "PARAMTER",
-    "asc": "SORTVALUE",
-    "desc": "SORTVALUE",
-    "yes": "BOOLVALUE",
-    "no": "BOOLVALUE",
-    "to:": "TO",
-    "from:": "FROM",
-    "cc:": "CC",
-    "forwarded:": "FORWARDED",
-    "read:": "READ",
-    "body:": "BODY",
-    "attachements:": "ATTACHEMENTS",
-    "time:": "TIME",
-    "subject:": "SUBJECT",
-    "sortby:": "SORTBY",
-    "folder:": "FOLDER",
-    "print": "PRINT",
-    "+": "OPERAND",
-    "-": "OPERAND",
-    ":": "ASSIGN",
-    "*": "STAR",
-    "{": "LEFTBRACE",
-    "}": "RIGHTBRACE",
-    "(": "LEFTP",
-    ")": "RIGHTP"
+    "time": "PARAMETER",#p
+    "name": "PARAMETER",#p
+    "asc": "SORTVALUE",#s
+    "desc": "SORTVALUE",#s
+    "yes": "BOOLVALUE",#b
+    "no": "BOOLVALUE",#b
+    "to:": "TO",#t
+    "from:": "FROM",#f
+    "cc:": "CC",#c
+    "forwarded:": "FORWARDED",#f
+    "read:": "READ",#r
+    "body:": "BODY",#y
+    "attachments:": "ATTACHMENTS",#a
+    "time:": "TIME",#t
+    "subject:": "SUBJECT",#e
+    "sortby:": "SORTBY",#o
+    "folder:": "FOLDER",#z
+    "print": "PRINT",#i
+    "+": "OPERAND",#n
+    "-": "OPERAND",#n
+    ":": "ASSIGN",#g
+    "*": "STAR",#*
+    "{": "LEFTBRACE",#{
+    "}": "RIGHTBRACE",#}
+    "(": "LEFTP",#(
+    ")": "RIGHTP"#)
 }
 
 sourceCodeChars = list(sourceCode)
@@ -57,7 +51,6 @@ def stringProcess(i):
             break
         string += char
     return string
-
 
 def intProcess(i):
     temp = sourceCodeChars[i:]
@@ -128,6 +121,9 @@ while i < len(sourceCodeChars):
         tokenList.append((type, char))
         i += len(char)
 
+
 print(sourceCode)
 print()
-pprint(tokenList)
+tokens = [token[0] for token in tokenList]
+
+print(tokens)

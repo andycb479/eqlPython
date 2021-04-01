@@ -1,14 +1,8 @@
-filterOrange: {
-to: orange@gmail.com
-time: 29-01-2021*
-subject: "cont de plata" }
 
 filterFisc: {
 from: fisc@yahoo.com
 Read: no
 body: amenda taxe
-attachements: 1..2 }
-
-filterAll: filterOrange + filterFisc
-
-print(filterOrange)
+attachements: 1..2
+sortby: name desc
+}
