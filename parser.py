@@ -1,5 +1,5 @@
 grammar = {
-    "program": [["@", "statement", "program"]],
+    "program": [["@"], ["statement", "program"]],
     "statement": [["assignment"], ["print"]],
     "assignment": [["WORD", "ASSIGN", "query"],
                    ["WORD", "ASSIGN", "expression"]],

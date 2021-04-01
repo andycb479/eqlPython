@@ -1,6 +1,5 @@
 from pprint import pprint
 
-
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
@@ -11,32 +10,32 @@ def open_file():
 sourceCode = open_file()
 
 tokenTypes = {
-    "time": "PARAMETER",
-    "name": "PARAMTER",
-    "asc": "SORTVALUE",
-    "desc": "SORTVALUE",
-    "yes": "BOOLVALUE",
-    "no": "BOOLVALUE",
-    "to:": "TO",
-    "from:": "FROM",
-    "cc:": "CC",
-    "forwarded:": "FORWARDED",
-    "read:": "READ",
-    "body:": "BODY",
-    "attachments:": "ATTACHMENTS",
-    "time:": "TIME",
-    "subject:": "SUBJECT",
-    "sortby:": "SORTBY",
-    "folder:": "FOLDER",
-    "print": "PRINT",
-    "+": "OPERAND",
-    "-": "OPERAND",
-    ":": "ASSIGN",
-    "*": "STAR",
-    "{": "LEFTBRACE",
-    "}": "RIGHTBRACE",
-    "(": "LEFTP",
-    ")": "RIGHTP"
+    "time": "PARAMETER",#p
+    "name": "PARAMETER",#p
+    "asc": "SORTVALUE",#s
+    "desc": "SORTVALUE",#s
+    "yes": "BOOLVALUE",#b
+    "no": "BOOLVALUE",#b
+    "to:": "TO",#t
+    "from:": "FROM",#f
+    "cc:": "CC",#c
+    "forwarded:": "FORWARDED",#f
+    "read:": "READ",#r
+    "body:": "BODY",#y
+    "attachments:": "ATTACHMENTS",#a
+    "time:": "TIME",#t
+    "subject:": "SUBJECT",#e
+    "sortby:": "SORTBY",#o
+    "folder:": "FOLDER",#z
+    "print": "PRINT",#i
+    "+": "OPERAND",#n
+    "-": "OPERAND",#n
+    ":": "ASSIGN",#g
+    "*": "STAR",#*
+    "{": "LEFTBRACE",#{
+    "}": "RIGHTBRACE",#}
+    "(": "LEFTP",#(
+    ")": "RIGHTP"#)
 }
 
 sourceCodeChars = list(sourceCode)
@@ -125,4 +124,6 @@ while i < len(sourceCodeChars):
 
 print(sourceCode)
 print()
-pprint(tokenList)
+tokens = [token[0] for token in tokenList]
+
+print(tokens)
