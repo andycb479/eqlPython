@@ -1,5 +1,6 @@
 from pprint import pprint
 
+
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
@@ -10,32 +11,32 @@ def open_file():
 sourceCode = open_file()
 
 tokenTypes = {
-    "time": "PARAMETER",#p
-    "name": "PARAMETER",#p
-    "asc": "SORTVALUE",#s
-    "desc": "SORTVALUE",#s
-    "yes": "BOOLVALUE",#b
-    "no": "BOOLVALUE",#b
-    "to:": "TO",#t
-    "from:": "FROM",#f
-    "cc:": "CC",#c
-    "forwarded:": "FORWARDED",#f
-    "read:": "READ",#r
-    "body:": "BODY",#y
-    "attachments:": "ATTACHMENTS",#a
-    "time:": "TIME",#t
-    "subject:": "SUBJECT",#e
-    "sortby:": "SORTBY",#o
-    "folder:": "FOLDER",#z
-    "print": "PRINT",#i
-    "+": "OPERAND",#n
-    "-": "OPERAND",#n
-    ":": "ASSIGN",#g
-    "*": "STAR",#*
-    "{": "LEFTBRACE",#{
-    "}": "RIGHTBRACE",#}
-    "(": "LEFTP",#(
-    ")": "RIGHTP"#)
+    "time": "PARAMETER",  # p
+    "name": "PARAMETER",  # p
+    "asc": "SORTVALUE",  # s
+    "desc": "SORTVALUE",  # s
+    "yes": "BOOLVALUE",  # b
+    "no": "BOOLVALUE",  # b
+    "to:": "TO",  # t
+    "from:": "FROM",  # f
+    "cc:": "CC",  # c
+    "forwarded:": "FORWARDED",  # f
+    "read:": "READ",  # r
+    "body:": "BODY",  # y
+    "attachments:": "ATTACHMENTS",  # a
+    "time:": "TIME",  # t
+    "subject:": "SUBJECT",  # e
+    "sortby:": "SORTBY",  # o
+    "folder:": "FOLDER",  # z
+    "print": "PRINT",  # i
+    "+": "OPERAND",  # n
+    "-": "OPERAND",  # n
+    ":": "ASSIGN",  # g
+    "*": "STAR",  # *
+    "{": "LEFTBRACE",  # {
+    "}": "RIGHTBRACE",  # }
+    "(": "LEFTP",  # (
+    ")": "RIGHTP"  # )
 }
 
 sourceCodeChars = list(sourceCode)
@@ -51,6 +52,7 @@ def stringProcess(i):
             break
         string += char
     return string
+
 
 def intProcess(i):
     temp = sourceCodeChars[i:]
@@ -120,7 +122,6 @@ while i < len(sourceCodeChars):
         type, char = alphaProcess(i)
         tokenList.append((type, char))
         i += len(char)
-
 
 print(sourceCode)
 print()
