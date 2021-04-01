@@ -1,6 +1,8 @@
 from pprint import pprint
 
 
+# Function for opening the file input.txt
+# and storing it's content in sourceCode
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
@@ -8,8 +10,11 @@ def open_file():
     return data
 
 
+# Get source code from file
 sourceCode = open_file()
 
+
+# Declaring the tokenTypes - terminal elements
 tokenTypes = {
     "time": "PARAMETER",
     "name": "PARAMTER",
@@ -52,6 +57,7 @@ def stringProcess(i):
             break
         string += char
     return string
+
 
 def intProcess(i):
     temp = sourceCodeChars[i:]
@@ -121,7 +127,6 @@ while i < len(sourceCodeChars):
         type, char = alphaProcess(i)
         tokenList.append((type, char))
         i += len(char)
-
 
 print(sourceCode)
 print()
