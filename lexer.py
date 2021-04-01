@@ -39,6 +39,15 @@ tokenTypes = {
     ")": "RIGHTP"  # )
 }
 
+# DATE - d
+# INTERVAL - j
+# YEAR - m
+# DAY - q
+# EMAIL - l
+# INT - u
+# STRING - k
+# WORD - w
+
 sourceCodeChars = list(sourceCode)
 tokenList = []
 i = 0
