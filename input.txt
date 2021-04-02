@@ -1,8 +1,1 @@
-
-filterFisc: {
-from: fisc@yahoo.com
-Read: no
-body: amenda taxe
-attachements: 1..2
-sortby: name desc
-}
+print(word wasea)

@@ -1,15 +1,21 @@
 grammar = {
     "program": [["@"], ["statement", "program"]],  # A
+
     "statement": [["assignment"], ["print"]],  # B
-    "assignment": [["WORD", "ASSIGN", "query"],  # C
-                   ["WORD", "ASSIGN", "expression"]],
-    "query": [["LEFTBRACE", "STAR", "RIGHTBRACE"],  # D
-              ["LEFTBRACE", "filter", "query", "RIGHTBRACE"],
+
+    "assignment": [["WORD", "ASSIGN", "X1"]],  # C
+    "X1": [["query"], ["expression"]],  # ADDED NEW Â
+
+    "query": [["LEFTBRACE", "query", "RIGHTBRACE"],  # D
               ["filter", "query"],
               ["filter"],
-              ["@"]],
-    "print": [["PRINT", "LEFTP", "query", "RIGHTP"],  # E
-              ["PRINT", "LEFTP", "WORD", "RIGHTP"]],
+              ["@"],
+              ["STAR"]],
+
+    "print": [["PRINT", "LEFTP", "X2", "RIGHTP"]],
+
+    "X2": [["query"], ["WORD"]],  # ADDED NEW
+
     "expression": [["expression", "OPERAND", "expression"],  # F
                    ["query"],
                    ["WORD"]],
@@ -17,6 +23,7 @@ grammar = {
                ["subject"], ["property"],
                ["content"], ["sorting"],
                ["folder"]],
+
     "destination": [["to"], ["from"], ["cc"]],  # H
     "time": [["TIME", "datevalue"]],  # I
     "subject": [["SUBJECT", "subjectvalue"]],  # J
@@ -31,10 +38,16 @@ grammar = {
     "read": [["READ", "BOOLVALUE"]],  # S
     "body": [["BODY", "bodyvalue"]],  # T
     "attachments": [["ATTACHMENTS", "attachementsvalue"]],  # U
-    "datevalue": [["DATE"], ["DATE", "STAR", "DATE"],  # V
-                  ["DATE", "STAR"], ["STAR", "DATE"],
-                  ["STAR", "DAY"], ["DAY", "STAR"],
-                  ["STAR", "YEAR"], ["YEAR", "STAR"]],
+
+
+    "datevalue": [["DATE", "X2"]  # V
+                  ["X2"],
+                  ["STAR", "X3"], ["X3", "STAR"]],
+
+    "X2":[["STAR","DATE"],["STAR"],["@"]],
+    "X3":[["YEAR"],["DAY"]],
+
+
     "subjectvalue": [["wordlist", "STRING"]],  # W
     "sortingvalue": [["PARAMETER", "SORTVALUE"]],  # X
     "foldervalue": [["STRING"]],  # Ș

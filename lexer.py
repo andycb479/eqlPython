@@ -11,12 +11,10 @@ def open_file():
 sourceCode = open_file()
 
 tokenTypes = {
-    "time": "PARAMETER",  # p
-    "name": "PARAMETER",  # p
-    "asc": "SORTVALUE",  # s
-    "desc": "SORTVALUE",  # s
-    "yes": "BOOLVALUE",  # b
-    "no": "BOOLVALUE",  # b
+
+    "time": "PARAMETER", "name": "PARAMETER",  # p
+    "asc": "SORTVALUE", "desc": "SORTVALUE",  # s
+    "yes": "BOOLVALUE", "no": "BOOLVALUE",  # b
     "to:": "TO",  # t
     "from:": "FROM",  # f
     "cc:": "CC",  # c
@@ -24,19 +22,18 @@ tokenTypes = {
     "read:": "READ",  # r
     "body:": "BODY",  # y
     "attachments:": "ATTACHMENTS",  # a
-    "time:": "TIME",  # t
+    "time:": "TIME",  # ă
     "subject:": "SUBJECT",  # e
     "sortby:": "SORTBY",  # o
     "folder:": "FOLDER",  # z
     "print": "PRINT",  # i
-    "+": "OPERAND",  # n
-    "-": "OPERAND",  # n
-    ":": "ASSIGN",  # g
-    "*": "STAR",  # *
+    "+": "OPERAND", "-": "OPERAND",  # n
+    ":": "ASSIGN",  # :
     "{": "LEFTBRACE",  # {
     "}": "RIGHTBRACE",  # }
     "(": "LEFTP",  # (
     ")": "RIGHTP"  # )
+
 }
 
 # DATE - d
@@ -47,6 +44,7 @@ tokenTypes = {
 # INT - u
 # STRING - k
 # WORD - w
+# DATESTRING - â
 
 sourceCodeChars = list(sourceCode)
 tokenList = []
@@ -68,7 +66,7 @@ def intProcess(i):
     string = ""
     type = "INT"
     for char in temp:
-        if char.isnumeric() or char in "-.dy":
+        if char.isnumeric() or char in "-.dy*":
             string += char
         else:
             break
@@ -76,14 +74,16 @@ def intProcess(i):
     if string.__contains__("-"):
         type = "DATE"
 
-    if string.__contains__(".."):
-        type = "INTERVAL"
-
     if string.__contains__("y"):
         type = "YEAR"
-
     if string.__contains__("d"):
         type = "DAY"
+
+    if string.__contains__("*"):
+        type = "DATESTRING"
+
+    if string.__contains__(".."):
+        type = "INTERVAL"
 
     return type, string
 
@@ -113,7 +113,10 @@ def alphaProcess(i):
 
 while i < len(sourceCodeChars):
     char = sourceCodeChars[i]
-    if char in " \n\t\r":
+    if char == "*" and not sourceCodeChars[i + 1].isnumeric():
+        tokenList.append(("STAR", char))
+        i += 1
+    elif char in " \n\t\r":
         i += 1
     elif tokenTypes.get(char):
         tokenList.append((tokenTypes.get(char), char))
@@ -122,7 +125,7 @@ while i < len(sourceCodeChars):
         char = stringProcess(i + 1)
         tokenList.append(("STRING", char))
         i += len(char) + 2
-    elif char.isnumeric():
+    elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric()):
         type, char = intProcess(i)
         tokenList.append((type, char))
         i += len(char)
@@ -134,6 +137,6 @@ while i < len(sourceCodeChars):
 
 print(sourceCode)
 print()
-tokens = [token[0] for token in tokenList]
+tokens = [token for token in tokenList]
 
 print(tokens)
