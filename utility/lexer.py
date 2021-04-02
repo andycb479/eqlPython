@@ -1,4 +1,5 @@
-from pprint import pprint
+from utility.parser import parseTable
+
 
 def open_file():
     sourceCode = open("input.txt", "r")
@@ -136,6 +137,37 @@ while i < len(sourceCodeChars):
 
 print(sourceCode)
 print()
-tokens = [token for token in tokenList]
 
-print(tokens)
+input = [token[0] for token in tokenList] + ["$"]
+stack = ["$", "program"]
+
+print(input)
+
+print(stack)
+
+current = parseTable[stack[-1]][input[0]]
+current.reverse()
+
+if current:
+    stack.pop()
+    stack += current
+
+current = parseTable[stack[-1]][input[0]]
+current.reverse()
+
+if current:
+    stack.pop()
+    stack += current
+
+current = parseTable[stack[-1]][input[0]]
+current.reverse()
+
+if current:
+    stack.pop()
+    stack += current
+
+
+print(stack)
+
+# def Parser(stack):
+#     for token in input:
