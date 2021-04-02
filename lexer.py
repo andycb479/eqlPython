@@ -1,6 +1,5 @@
 from pprint import pprint
 
-
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
