@@ -1,4 +1,5 @@
 from utility.parser import parseTable
+from pprint import pprint
 
 
 def open_file():
@@ -142,6 +143,10 @@ def parse():
     print(input)
     stack = ["$", "program"]
     index = 0
+    parseTree = {"program":{}}
+
+    parseTreeLevel = parseTree
+
     prev = 0
     while len(stack) > 0:
         top = stack[-1]
@@ -161,11 +166,22 @@ def parse():
 
                 current.reverse()
 
-
             else:
                 stack.pop()
 
-    print(stack)
+        if not top[0].isupper() and top[0] !="$":
+            temp = {}
+            for key in current:
+                if key[0].isupper():
+                    temp[key] = "value"
+                elif key[0] == "@":
+                    temp[key] = "@"
+                else:
+                    temp[key] = {}
+            parseTreeLevel[top] = temp
+            parseTreeLevel = parseTreeLevel[top]
+
+    pprint(parseTree)
 
     if flag == 0:
         print("String accepted")
@@ -174,3 +190,24 @@ def parse():
 
 
 parse()
+
+
+class NonTerminalNode:
+    def __init__(self,name):
+        self.name = name
+        self.nodeList = []
+    def __str__(self):
+        return self.name
+
+class TerminalNode:
+    def __init__(self,name,value):
+        self.name = name
+        self.value = value
+
+program = NonTerminalNode("program")
+
+program.nodeList.append(TerminalNode("WORD","value"))
+program.nodeList.append(TerminalNode("WORD","value"))
+program.nodeList.append(NonTerminalNode("statement"))
+
+print(program)

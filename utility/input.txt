@@ -1,7 +1,6 @@
 filter:{
-to:*
-time: 11-12-11*
-from:*
+to: vasea
 }
-filter: fi + fi + fi
-print(filter)
+filter:{
+to: vasea
+}
