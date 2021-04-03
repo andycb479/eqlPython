@@ -1,5 +1,4 @@
-from utility.parser import parseTable
-
+from eqlPython.utility.parser import parseTable
 
 def open_file():
     sourceCode = open("input.txt", "r")
@@ -135,39 +134,23 @@ while i < len(sourceCodeChars):
         tokenList.append((type, char))
         i += len(char)
 
-print(sourceCode)
-print()
 
-input = [token[0] for token in tokenList] + ["$"]
-stack = ["$", "program"]
-
-print(input)
-
-print(stack)
-
-current = parseTable[stack[-1]][input[0]]
-current.reverse()
-
-if current:
-    stack.pop()
-    stack += current
-
-current = parseTable[stack[-1]][input[0]]
-current.reverse()
-
-if current:
-    stack.pop()
-    stack += current
-
-current = parseTable[stack[-1]][input[0]]
-current.reverse()
-
-if current:
-    stack.pop()
-    stack += current
+def parse():
+    input = [token[0] for token in tokenList] + ["$"]
+    stack = ["$", "program"]
+    while True:
+        try:
+            current = parseTable[stack[-1]][input[0]]
+            current.reverse()
+        except:
+            break
+        if current:
+            stack.pop()
+            stack += current
+    print(stack)
 
 
-print(stack)
+parse()
 
 # def Parser(stack):
 #     for token in input:

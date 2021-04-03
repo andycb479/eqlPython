@@ -1,0 +1,54 @@
+================
+NON TERMINALS
+================
+A - program
+B - statement
+C - assignment
+D - assignvalue
+E - query
+F - queryvalue
+G - print
+H - printvalue
+I - expression
+Z - expressionterm
+K - filter
+L - textvalue
+Â - datevalue
+N - destinationvalue
+O - attachementsvalue
+P - wordlist
+================
+
+================
+TERMINALS
+================
+p - PARAMETER
+s - SORTVALUE
+b - BOOLVALUE
+t - TO
+f - FROM
+c - CC
+ș - FORWARDED
+r - READ
+y - BODY
+a - ATTACHMENTS
+ă - TIME
+e - SUBJECT
+o - SORTBY
+z - FOLDER
+i - PRINT
+n - OPERAND
+: - ASSIGN
+{ - LEFTBRACE
+} - RIGHTBRACE
+( - LEFTP
+) - RIGHTP
+d - DATE
+j - INTERVAL
+m - YEAR
+q - DAY
+l - EMAIL
+u - INT
+k - STRING
+w - WORD
+â - DATESTRING
