@@ -135,22 +135,60 @@ while i < len(sourceCodeChars):
         i += len(char)
 
 
+# def parse():
+#     input = [token[0] for token in tokenList] + ["$"]
+#     stack = ["$", "program"]
+#     while True:
+#         try:
+#             current = parseTable[stack[-1]][input[0]]
+#             current.reverse()
+#         except:
+#             break
+#         if current:
+#             stack.pop()
+#             stack += current
+#     print(stack)
+
 def parse():
+    flag = 0
     input = [token[0] for token in tokenList] + ["$"]
     stack = ["$", "program"]
-    while True:
-        try:
-            current = parseTable[stack[-1]][input[0]]
-            current.reverse()
-        except:
-            break
-        if current:
+    index = 0
+    while len(stack) > 0:
+        top = stack[len(stack) - 1]
+        current_input = input[index]
+        if top == current_input:
             stack.pop()
-            stack += current
-    print(stack)
+            index = index + 1
+        else:
+            try:
+                current = parseTable[stack[-1]][input[0]]
+                current.reverse()
+            except:
+                flag = 1
+                break
+            if current != '@':
+                current = current[::-1]
+                stack.pop()
+                stack += current
+            else:
+                stack.pop()
+    if flag == 0:
+        print("String accepted")
+    else:
+        print("String not accepted")
 
 
 parse()
 
 # def Parser(stack):
 #     for token in input:
+
+
+
+
+
+
+
+
+
