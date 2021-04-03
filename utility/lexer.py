@@ -1,4 +1,5 @@
-from eqlPython.utility.parser import parseTable
+from utility.parser import parseTable
+
 
 def open_file():
     sourceCode = open("input.txt", "r")
@@ -112,7 +113,7 @@ def alphaProcess(i):
 
 while i < len(sourceCodeChars):
     char = sourceCodeChars[i]
-    if char == "*" and not sourceCodeChars[i + 1].isnumeric():
+    if char == "*" and (not sourceCodeChars[i + 1].isnumeric() and sourceCodeChars[i+1] not in 'dy'):
         tokenList.append(("STAR", char))
         i += 1
     elif char in " \n\t\r":
@@ -124,7 +125,7 @@ while i < len(sourceCodeChars):
         char = stringProcess(i + 1)
         tokenList.append(("STRING", char))
         i += len(char) + 2
-    elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric()):
+    elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric() or sourceCodeChars[i+1] in 'dy'):
         type, char = intProcess(i)
         tokenList.append((type, char))
         i += len(char)
@@ -135,44 +136,37 @@ while i < len(sourceCodeChars):
         i += len(char)
 
 
-# def parse():
-#     input = [token[0] for token in tokenList] + ["$"]
-#     stack = ["$", "program"]
-#     while True:
-#         try:
-#             current = parseTable[stack[-1]][input[0]]
-#             current.reverse()
-#         except:
-#             break
-#         if current:
-#             stack.pop()
-#             stack += current
-#     print(stack)
-
 def parse():
     flag = 0
     input = [token[0] for token in tokenList] + ["$"]
+    print(input)
     stack = ["$", "program"]
     index = 0
+    prev = 0
     while len(stack) > 0:
-        top = stack[len(stack) - 1]
+        top = stack[-1]
         current_input = input[index]
         if top == current_input:
             stack.pop()
-            index = index + 1
+            index += 1
         else:
-            try:
-                current = parseTable[stack[-1]][input[0]]
-                current.reverse()
-            except:
-                flag = 1
-                break
-            if current != '@':
-                current = current[::-1]
+
+            current = parseTable[top].__getitem__(current_input)
+            current.reverse()
+
+            if current[0] not in '@':
                 stack.pop()
+
                 stack += current
+
+                current.reverse()
+
+
             else:
                 stack.pop()
+
+    print(stack)
+
     if flag == 0:
         print("String accepted")
     else:
@@ -180,15 +174,3 @@ def parse():
 
 
 parse()
-
-# def Parser(stack):
-#     for token in input:
-
-
-
-
-
-
-
-
-

@@ -1,1 +1,7 @@
-print(word wasea)
+filter:{
+to:*
+time: 11-12-11*
+from:*
+}
+filter: fi + fi + fi
+print(filter)

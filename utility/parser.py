@@ -67,8 +67,8 @@ parseTable = {
         "$": ["@"]
     },
     "statement": {"PRINT": ["print"], "WORD": ["assignment"]},  # B
-    "assignment": {"WORD": ["WORD", "ASSIGN", "query"]},
-    "assignvalue": {"WORD": ["time"], "LEFTBRACE": ["query"]},
+    "assignment": {"WORD": ["WORD", "ASSIGN", "assignvalue"]},
+    "assignvalue": {"WORD": ["expression"], "LEFTBRACE": ["query"]},
     "query": {"LEFTBRACE": ["LEFTBRACE", "queryvalue", "RIGHTBRACE"]},
     "queryvalue": {
         "ATTACHMENTS": ["filter", "queryvalue"],
@@ -180,5 +180,3 @@ parseTable = {
         "DATESTRING": ["DATESTRING"]
     }
 }
-
-print(parseTable["program"]["WORD"])
