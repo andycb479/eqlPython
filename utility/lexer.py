@@ -114,7 +114,7 @@ def alphaProcess(i):
 
 while i < len(sourceCodeChars):
     char = sourceCodeChars[i]
-    if char == "*" and (not sourceCodeChars[i + 1].isnumeric() and sourceCodeChars[i+1] not in 'dy'):
+    if char == "*" and (not sourceCodeChars[i + 1].isnumeric() and sourceCodeChars[i + 1] not in 'dy'):
         tokenList.append(("STAR", char))
         i += 1
     elif char in " \n\t\r":
@@ -126,7 +126,7 @@ while i < len(sourceCodeChars):
         char = stringProcess(i + 1)
         tokenList.append(("STRING", char))
         i += len(char) + 2
-    elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric() or sourceCodeChars[i+1] in 'dy'):
+    elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric() or sourceCodeChars[i + 1] in 'dy'):
         type, char = intProcess(i)
         tokenList.append((type, char))
         i += len(char)
@@ -137,15 +137,29 @@ while i < len(sourceCodeChars):
         i += len(char)
 
 
+class NonTerminalNode:
+    def __init__(self, name):
+        self.name = name
+        self.nodeList = []
+
+    def __str__(self):
+        return self.name
+
+
+class TerminalNode:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
 def parse():
     flag = 0
     input = [token[0] for token in tokenList] + ["$"]
     print(input)
     stack = ["$", "program"]
     index = 0
-    parseTree = {"program":{}}
-
-    parseTreeLevel = parseTree
+    parseTree = NonTerminalNode("program")
+    parseTreeLevel = parseTree.nodeList
 
     prev = 0
     while len(stack) > 0:
@@ -169,19 +183,34 @@ def parse():
             else:
                 stack.pop()
 
-        if not top[0].isupper() and top[0] !="$":
-            temp = {}
+        if not top[0].isupper() and top[0] != "$":
+
+            if len(parseTreeLevel) and isinstance(parseTreeLevel[0], TerminalNode):
+                if parseTreeLevel[0].value == "@":
+                    flag = True
+                    while flag:
+                        root = parseTree.nodeList
+                        for key in root:
+                            if top == str(key) and len(key.nodeList) == 0:
+                                parseTreeLevel = key.nodeList
+                                flag = False
+                                break
+
+            for key in parseTreeLevel:
+                if top == str(key):
+                    parseTreeLevel = key.nodeList
+
+            temp = []
             for key in current:
                 if key[0].isupper():
-                    temp[key] = "value"
+                    temp.append(TerminalNode(key, "value"))
                 elif key[0] == "@":
-                    temp[key] = "@"
+                    temp.append(TerminalNode(key, "@"))
                 else:
-                    temp[key] = {}
-            parseTreeLevel[top] = temp
-            parseTreeLevel = parseTreeLevel[top]
+                    temp.append(NonTerminalNode(key))
+            parseTreeLevel += temp
 
-    pprint(parseTree)
+    print(parseTree)
 
     if flag == 0:
         print("String accepted")
@@ -190,24 +219,3 @@ def parse():
 
 
 parse()
-
-
-class NonTerminalNode:
-    def __init__(self,name):
-        self.name = name
-        self.nodeList = []
-    def __str__(self):
-        return self.name
-
-class TerminalNode:
-    def __init__(self,name,value):
-        self.name = name
-        self.value = value
-
-program = NonTerminalNode("program")
-
-program.nodeList.append(TerminalNode("WORD","value"))
-program.nodeList.append(TerminalNode("WORD","value"))
-program.nodeList.append(NonTerminalNode("statement"))
-
-print(program)
