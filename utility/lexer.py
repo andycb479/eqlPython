@@ -152,9 +152,24 @@ class TerminalNode:
         self.value = value
 
 
+def findEmpty(top, parseTreeLevel):
+    if not isinstance(parseTreeLevel, NonTerminalNode):
+        return
+
+    root = parseTreeLevel.nodeList
+
+    for key in root:
+        if top == str(key) and len(key.nodeList) == 0:
+            return key.nodeList
+
+    root.reverse()
+    for key in root:
+        return findEmpty(top, key)
+
 def parse():
     flag = 0
     input = [token[0] for token in tokenList] + ["$"]
+    inputValues = [token[1] for token in tokenList]
     print(input)
     stack = ["$", "program"]
     index = 0
@@ -187,14 +202,7 @@ def parse():
 
             if len(parseTreeLevel) and isinstance(parseTreeLevel[0], TerminalNode):
                 if parseTreeLevel[0].value == "@":
-                    flag = True
-                    while flag:
-                        root = parseTree.nodeList
-                        for key in root:
-                            if top == str(key) and len(key.nodeList) == 0:
-                                parseTreeLevel = key.nodeList
-                                flag = False
-                                break
+                    parseTreeLevel = findEmpty(top,parseTree)
 
             for key in parseTreeLevel:
                 if top == str(key):
@@ -203,19 +211,16 @@ def parse():
             temp = []
             for key in current:
                 if key[0].isupper():
-                    temp.append(TerminalNode(key, "value"))
+                    temp.append(TerminalNode(key, inputValues[index]))
                 elif key[0] == "@":
                     temp.append(TerminalNode(key, "@"))
                 else:
                     temp.append(NonTerminalNode(key))
             parseTreeLevel += temp
 
-    print(parseTree)
-
     if flag == 0:
         print("String accepted")
     else:
         print("String not accepted")
-
-
+    print(inputValues)
 parse()

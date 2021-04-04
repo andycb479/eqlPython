@@ -1,1 +1,3 @@
-print( wasea wasea)
+print( wasea toles)
+
+print(vasea)
