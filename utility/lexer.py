@@ -1,15 +1,11 @@
 import weakref
-
 from utility.parser import parseTable
-import gc
-
 
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
     sourceCode.close()
     return data
-
 
 sourceCode = open_file()
 
@@ -148,7 +144,7 @@ class NonTerminalNode:
         self.__class__.instances.append(weakref.proxy(self))
 
     def __str__(self):
-        return self.name
+        return f"<{self.name}>"
 
 
 class TerminalNode:
@@ -156,10 +152,27 @@ class TerminalNode:
         self.name = name
         self.value = value
 
+    def __str__(self):
+        return f"{self.name.upper()} " + "\""+self.value+"\""
+
+def printTree(node,level):
+    res=""
+
+    if not isinstance(node,NonTerminalNode):
+        return "\t" * level + str(node) + "\n"
+
+    for child in node.nodeList:
+        res = "\t" * level + str(node) + "\n"
+        for child in node.nodeList:
+            res += printTree(child,level+1)
+        return res
+
+
+
+
 def parse():
     flag = 0
     input = [token[0] for token in tokenList] + ["$"]
-    inputValues = [token[1] for token in tokenList]
     print(input)
     stack = ["$", "program"]
     index = 0
@@ -187,7 +200,7 @@ def parse():
         if not top[0].isupper() and top[0] != "$":
 
             for instance in NonTerminalNode.instances:
-                if top == str(instance) and len(instance.nodeList) == 0:
+                if top == instance.name and len(instance.nodeList) == 0:
                     currentNonTerminal = instance.nodeList
 
             temp = []
@@ -205,8 +218,7 @@ def parse():
 
     del NonTerminalNode.instances
 
-
-    print(parseTree)
+    print(printTree(parseTree, 1))
     if flag == 0:
         print("String accepted")
     else:

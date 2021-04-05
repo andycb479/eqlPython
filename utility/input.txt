@@ -1,3 +1,11 @@
 filterOrange: {
 attachments: 1..2
 }
+
+filterFisc:{
+from: fisc@gmail.com
+time: 10-10-2111
+read: yes
+}
+
+print(test test)
