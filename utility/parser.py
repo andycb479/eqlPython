@@ -121,7 +121,7 @@ parseTable = {
         "CC": ["@"],
         "SUBJECT": ["@"],
         "FROM": ["@"],
-        "EMAIL": ["expression", "destinationvalue"],
+        "EMAIL": ["EMAIL", "destinationvalue"],
         "SORTBY": ["@"],
         "READ": ["@"],
         "TO": ["@"],

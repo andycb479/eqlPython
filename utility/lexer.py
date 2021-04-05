@@ -1,5 +1,7 @@
+import weakref
+
 from utility.parser import parseTable
-from pprint import pprint
+import gc
 
 
 def open_file():
@@ -138,9 +140,12 @@ while i < len(sourceCodeChars):
 
 
 class NonTerminalNode:
+    instances = []
+
     def __init__(self, name):
         self.name = name
         self.nodeList = []
+        self.__class__.instances.append(weakref.proxy(self))
 
     def __str__(self):
         return self.name
@@ -151,21 +156,6 @@ class TerminalNode:
         self.name = name
         self.value = value
 
-
-def findEmpty(top, parseTreeLevel):
-    if not isinstance(parseTreeLevel, NonTerminalNode):
-        return
-
-    root = parseTreeLevel.nodeList
-
-    for key in root:
-        if top == str(key) and len(key.nodeList) == 0:
-            return key.nodeList
-
-    root.reverse()
-    for key in root:
-        return findEmpty(top, key)
-
 def parse():
     flag = 0
     input = [token[0] for token in tokenList] + ["$"]
@@ -174,7 +164,7 @@ def parse():
     stack = ["$", "program"]
     index = 0
     parseTree = NonTerminalNode("program")
-    parseTreeLevel = parseTree.nodeList
+    currentNonTerminal = parseTree.nodeList
 
     prev = 0
     while len(stack) > 0:
@@ -184,43 +174,44 @@ def parse():
             stack.pop()
             index += 1
         else:
-
             current = parseTable[top].__getitem__(current_input)
             current.reverse()
 
             if current[0] not in '@':
                 stack.pop()
-
                 stack += current
-
                 current.reverse()
-
             else:
                 stack.pop()
 
         if not top[0].isupper() and top[0] != "$":
 
-            if len(parseTreeLevel) and isinstance(parseTreeLevel[0], TerminalNode):
-                if parseTreeLevel[0].value == "@":
-                    parseTreeLevel = findEmpty(top,parseTree)
-
-            for key in parseTreeLevel:
-                if top == str(key):
-                    parseTreeLevel = key.nodeList
+            for instance in NonTerminalNode.instances:
+                if top == str(instance) and len(instance.nodeList) == 0:
+                    currentNonTerminal = instance.nodeList
 
             temp = []
             for key in current:
                 if key[0].isupper():
-                    temp.append(TerminalNode(key, inputValues[index]))
+                    for type, value in tokenList[index:]:
+                        if type == key:
+                            temp.append(TerminalNode(key, value))
+                            break
                 elif key[0] == "@":
                     temp.append(TerminalNode(key, "@"))
                 else:
                     temp.append(NonTerminalNode(key))
-            parseTreeLevel += temp
+            currentNonTerminal += temp
 
+    del NonTerminalNode.instances
+
+
+    print(parseTree)
     if flag == 0:
         print("String accepted")
     else:
         print("String not accepted")
-    print(inputValues)
+
+
+
 parse()
