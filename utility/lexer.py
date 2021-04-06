@@ -1,11 +1,14 @@
 import weakref
-from utility.parser import parseTable
+
+from eqlPython.utility.parser import parseTable
+
 
 def open_file():
     sourceCode = open("input.txt", "r")
     data = sourceCode.read()
     sourceCode.close()
     return data
+
 
 sourceCode = open_file()
 
@@ -34,6 +37,8 @@ tokenTypes = {
     ")": "RIGHTP"  # )
 
 }
+
+
 
 # DATE - d
 # INTERVAL - j
@@ -153,21 +158,20 @@ class TerminalNode:
         self.value = value
 
     def __str__(self):
-        return f"{self.name.upper()} " + "\""+self.value+"\""
+        return f"{self.name.upper()} " + "\"" + self.value + "\""
 
-def printTree(node,level):
-    res=""
 
-    if not isinstance(node,NonTerminalNode):
+def printTree(node, level):
+    res = ""
+
+    if not isinstance(node, NonTerminalNode):
         return "\t" * level + str(node) + "\n"
 
     for child in node.nodeList:
         res = "\t" * level + str(node) + "\n"
         for child in node.nodeList:
-            res += printTree(child,level+1)
+            res += printTree(child, level + 1)
         return res
-
-
 
 
 def parse():
@@ -224,6 +228,142 @@ def parse():
     else:
         print("String not accepted")
 
+    traverse(parseTree)
+
+
+class Filter:
+    def __init__(self, name, fields, values):
+        self.name = name
+        self.fields = fields
+        self.values = values
+
+
+class Expression:
+    def __init__(self, assigned, terms):
+        self.assigned = assigned
+        self.terms = terms
+
+
+class Print:
+    def __init__(self, op):
+        self.op = op
+
+
+Objects = []
+prevAssignWord = ""
+Content = []
+resultWordList = []
+fieldsFilter = []
+valuesFilter = []
+termsExpression = []
+assignedExpression = 0
+
+
+def find_word_list(node):
+    global resultWordList
+    for element in node.nodeList:
+        if element.name == "WORD":
+            resultWordList.append(element.value)
+        elif element.name == "wordlist":
+            find_word_list(element)
+        else:
+            return resultWordList
+
+
+def find_filter_fields(node):
+    global fieldsFilter
+    for element in node.nodeList:
+        if element.name == "LEFTBRACE" or element.name == "RIGHTBRACE":
+            continue
+        if element.name in "TO FROM CC FORWARDED READ BODY ATTACHMENTS TIME SUBJECT SORTBY FOLDER":
+            fieldsFilter.append(element.value)
+        elif element.name == "filter" or element.name == "queryvalue":
+            find_filter_fields(element)
+        else:
+            return fieldsFilter
+
+
+def find_filter_values(node):
+    global valuesFilter
+    for element in node.nodeList:
+        if element.name == "LEFTBRACE" or element.name == "RIGHTBRACE":
+            continue
+        elif element.name in "TO FROM CC FORWARDED READ BODY ATTACHMENTS TIME SUBJECT SORTBY FOLDER":
+            continue
+        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL YEAR DATE EMAIL INT STAR STRING":
+            valuesFilter.append(element.value)
+        elif element.name == "filter" or element.name == "queryvalue" \
+                or element.name == "destinationvalue" or element.name == "textvalue" :
+            find_filter_values(element)
+        elif element.name in "filter wordlist queryvalue destinationvalue " \
+                             "attachementsvalue textvalue assignvalue datevalue ":
+            find_filter_values(element)
+        else:
+            return valuesFilter
+
+
+def find_expression_elements(node):
+    global termsExpression
+    for element in node.nodeList:
+        if element.name == "WORD" or element.name == "OPERAND":
+            termsExpression.append(element.value)
+        elif element.name == "expressionterm" or element.name == "expression2":
+            find_expression_elements(element)
+        else:
+            return termsExpression
+
+
+def traverse(node):
+    global prevAssignWord
+    global resultWordList
+    if hasattr(node, 'nodeList'):
+        elements = []
+        for el in node.nodeList:
+            elements.append(el)
+
+        if node.name == "print":
+            for el in elements:
+                if el.name == "wordlist":
+                    resultWordList.clear()
+                    find_word_list(el)
+                    break
+            new_print = Print(resultWordList.copy())
+            Objects.append(new_print)
+
+        if node.name == "expression":
+            termsExpression.clear()
+            find_expression_elements(node)
+            new_expression = Expression(prevAssignWord, termsExpression)
+            Objects.append(new_expression)
+
+        if node.name == "query":
+            fieldsFilter.clear()
+            valuesFilter.clear()
+            find_filter_fields(node)
+            find_filter_values(node)
+            new_filter = Filter(prevAssignWord, fieldsFilter.copy(), valuesFilter.copy())
+            Objects.append(new_filter)
+
+        elif node.name == "assignment":
+            for el in elements:
+                if el.name == "WORD":
+                    prevAssignWord = el.value
+
+
+        for el in elements:
+            traverse(el)
 
 
 parse()
+
+print("Filter name ->",Objects[0].name)
+print("Fields ->",Objects[0].fields)
+print("Values ->",Objects[0].values)
+print("Filter name ->",Objects[1].name)
+print("Fields ->",Objects[1].fields)
+print("Values ->",Objects[1].values)
+print()
+print("Assigned ->",Objects[2].assigned)
+print("Terms ->",Objects[2].terms)
+print()
+print("Print ->", Objects[3].op)

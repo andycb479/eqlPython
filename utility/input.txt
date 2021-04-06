@@ -1,11 +1,14 @@
 filterOrange: {
-attachments: 1..2
-}
+to: orange
+time: 29-01-2021*
+subject: "cont de plata" }
 
-filterFisc:{
-from: fisc@gmail.com
-time: 10-10-2111
-read: yes
-}
+filterFisc: {
+from: fisc
+read: no
+body: amenda taxe
+attachments: yes }
 
-print(test test)
+filterAll: filterOrange + filterFisc
+
+print(filterAll)
