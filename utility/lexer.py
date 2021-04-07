@@ -1,4 +1,5 @@
 import weakref
+from pprint import pprint
 
 from eqlPython.utility.parser import parseTable
 
@@ -232,9 +233,8 @@ def parse():
 
 
 class Filter:
-    def __init__(self, name, fields, values):
+    def __init__(self, name, values):
         self.name = name
-        self.fields = fields
         self.values = values
 
 
@@ -257,6 +257,8 @@ fieldsFilter = []
 valuesFilter = []
 termsExpression = []
 assignedExpression = 0
+words = []
+destinations = []
 
 
 def find_word_list(node):
@@ -264,42 +266,47 @@ def find_word_list(node):
     for element in node.nodeList:
         if element.name == "WORD":
             resultWordList.append(element.value)
+            words.append(element.value)
         elif element.name == "wordlist":
             find_word_list(element)
         else:
             return resultWordList
 
 
-def find_filter_fields(node):
-    global fieldsFilter
+def find_destination_list(node):
+    global destinations
     for element in node.nodeList:
-        if element.name == "LEFTBRACE" or element.name == "RIGHTBRACE":
-            continue
-        if element.name in "TO FROM CC FORWARDED READ BODY ATTACHMENTS TIME SUBJECT SORTBY FOLDER":
-            fieldsFilter.append(element.value)
-        elif element.name == "filter" or element.name == "queryvalue":
-            find_filter_fields(element)
+        if element.name == "WORD":
+            destinations.append(element.value)
+        elif element.name == "destinationvalue":
+            find_destination_list(element)
         else:
-            return fieldsFilter
+            return destinations
 
 
-def find_filter_values(node):
+def find_filter(node):
+    global fieldsFilter
     global valuesFilter
+    global words
     for element in node.nodeList:
         if element.name == "LEFTBRACE" or element.name == "RIGHTBRACE":
             continue
         elif element.name in "TO FROM CC FORWARDED READ BODY ATTACHMENTS TIME SUBJECT SORTBY FOLDER":
-            continue
+            fieldsFilter.append(element.value)
+        elif element.name in "wordlist":
+            find_word_list(element)
+            valuesFilter.append(words.copy())
+            words.clear()
+        elif element.name in "destinationvalue":
+            find_destination_list(element)
+            valuesFilter.append(destinations.copy())
+            destinations.clear()
         elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL YEAR DATE EMAIL INT STAR STRING":
             valuesFilter.append(element.value)
-        elif element.name == "filter" or element.name == "queryvalue" \
-                or element.name == "destinationvalue" or element.name == "textvalue" :
-            find_filter_values(element)
-        elif element.name in "filter wordlist queryvalue destinationvalue " \
-                             "attachementsvalue textvalue assignvalue datevalue ":
-            find_filter_values(element)
+        elif element.name in "filter queryvalue attachementsvalue textvalue assignvalue datevalue ":
+            find_filter(element)
         else:
-            return valuesFilter
+            return fieldsFilter
 
 
 def find_expression_elements(node):
@@ -307,7 +314,8 @@ def find_expression_elements(node):
     for element in node.nodeList:
         if element.name == "WORD" or element.name == "OPERAND":
             termsExpression.append(element.value)
-        elif element.name == "expressionterm" or element.name == "expression2":
+        elif element.name == "expressionterm" \
+                or element.name == "expression2":
             find_expression_elements(element)
         else:
             return termsExpression
@@ -339,9 +347,10 @@ def traverse(node):
         if node.name == "query":
             fieldsFilter.clear()
             valuesFilter.clear()
-            find_filter_fields(node)
-            find_filter_values(node)
-            new_filter = Filter(prevAssignWord, fieldsFilter.copy(), valuesFilter.copy())
+            find_filter(node)
+            filter_values = dict(zip(fieldsFilter, valuesFilter))
+            new_filter = Filter(prevAssignWord, filter_values.copy())
+            filter_values.clear()
             Objects.append(new_filter)
 
         elif node.name == "assignment":
@@ -349,21 +358,20 @@ def traverse(node):
                 if el.name == "WORD":
                     prevAssignWord = el.value
 
-
         for el in elements:
             traverse(el)
 
 
 parse()
 
-print("Filter name ->",Objects[0].name)
-print("Fields ->",Objects[0].fields)
-print("Values ->",Objects[0].values)
-print("Filter name ->",Objects[1].name)
-print("Fields ->",Objects[1].fields)
-print("Values ->",Objects[1].values)
+print(Objects[0].name)
+pprint(Objects[0].values)
 print()
-print("Assigned ->",Objects[2].assigned)
-print("Terms ->",Objects[2].terms)
+print(Objects[1].name)
+pprint(Objects[1].values)
 print()
-print("Print ->", Objects[3].op)
+print(Objects[2].assigned)
+print(Objects[2].terms)
+print()
+print("Print")
+print(Objects[3].op)

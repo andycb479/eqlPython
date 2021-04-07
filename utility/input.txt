@@ -1,10 +1,10 @@
 filterOrange: {
-to: orange
+to: orange moldcell
 time: 29-01-2021*
 subject: "cont de plata" }
 
 filterFisc: {
-from: fisc
+from: fisc jora
 read: no
 body: amenda taxe
 attachments: yes }
