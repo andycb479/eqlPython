@@ -1,121 +1,51 @@
+from utility.grammar.parsingTable import parseTable
+from utility.dataTypes import NonTerminalNode,TerminalNode
 
-parseTable = {
-    "program": {
-        "PRINT": ["statement", "program"],
-        "WORD": ["statement", "program"],
-        "$": ["@"]
-    },
-    "statement": {"PRINT": ["print"], "WORD": ["assignment"]},  # B
-    "assignment": {"WORD": ["WORD", "ASSIGN", "assignvalue"]},
-    "assignvalue": {"WORD": ["expression"], "LEFTBRACE": ["query"]},
-    "query": {"LEFTBRACE": ["LEFTBRACE", "queryvalue", "RIGHTBRACE"]},
-    "queryvalue": {
-        "ATTACHMENTS": ["filter", "queryvalue"],
-        "CC": ["filter", "queryvalue"],
-        "SUBJECT": ["filter", "queryvalue"],
-        "FROM": ["filter", "queryvalue"],
-        "SORTBY": ["filter", "queryvalue"],
-        "READ": ["filter", "queryvalue"],
-        "TO": ["filter", "queryvalue"],
-        "BODY": ["filter", "queryvalue"],
-        "FOLDER": ["filter", "queryvalue"],
-        "RIGHTBRACE": ["@"],
-        "TIME": ["filter", "queryvalue"],
-        "FORWARDED": ["filter", "queryvalue"]
-    },
-    "print": {"PRINT": ["PRINT", "LEFTP", "wordlist", "RIGHTP"]},
-    "expression": {"WORD": ["expressionterm", "expression2"]},
-    "filter": {
-        "ATTACHMENTS": ["ATTACHMENTS", "attachementsvalue"],
-        "CC": ["CC", "destinationvalue"],
-        "SUBJECT": ["SUBJECT", "textvalue"],
-        "FROM": ["FROM", "destinationvalue"],
-        "SORTBY": ["SORTBY", "PARAMETER", "SORTVALUE"],
-        "READ": ["READ", "BOOLVALUE"],
-        "TO": ["TO", "destinationvalue"],
-        "BODY": ["BODY", "textvalue"],
-        "FOLDER": ["FOLDER", "STRING"],
-        "TIME": ["TIME", "datevalue"],
-        "FORWARDED": ["FORWARDED", "BOOLVALUE"]
-    },
-    "textvalue": {
-        "ATTACHMENTS": ["wordlist"],
-        "CC": ["wordlist"],
-        "SUBJECT": ["wordlist"],
-        "FROM": ["wordlist"],
-        "STRING": ["STRING"],
-        "SORTBY": ["wordlist"],
-        "READ": ["wordlist"],
-        "TO": ["wordlist"],
-        "WORD": ["wordlist"],
-        "BODY": ["wordlist"],
-        "FOLDER": ["wordlist"],
-        "RIGHTBRACE": ["wordlist"],
-        "TIME": ["wordlist"],
-        "FORWARDED": ["wordlist"]
-    },
-    "destinationvalue": {
-        "STAR": ["STAR"],
-        "ATTACHMENTS": ["@"],
-        "CC": ["@"],
-        "SUBJECT": ["@"],
-        "FROM": ["@"],
-        "EMAIL": ["EMAIL", "destinationvalue"],
-        "SORTBY": ["@"],
-        "READ": ["@"],
-        "TO": ["@"],
-        "WORD": ["WORD", "destinationvalue"],
-        "BODY": ["@"],
-        "FOLDER": ["@"],
-        "RIGHTBRACE": ["@"],
-        "TIME": ["@"],
-        "FORWARDED": ["@"]
-    },
-    "attachementsvalue": {
-        "ATTACHMENTS": ["wordlist"],
-        "BOOLVALUE" : ["BOOLVALUE"],
-        "CC": ["wordlist"],
-        "SUBJECT": ["wordlist"],
-        "FROM": ["wordlist"],
-        "INTERVAL": ["INTERVAL"],
-        "SORTBY": ["wordlist"],
-        "READ": ["wordlist"],
-        "TO": ["wordlist"],
-        "INT": ["INT"],
-        "WORD": ["wordlist"],
-        "BODY": ["wordlist"],
-        "FOLDER": ["wordlist"],
-        "RIGHTBRACE": ["wordlist"],
-        "TIME": ["wordlist"],
-        "FORWARDED": ["wordlist"]
-    },
-    "wordlist": {
-        "RIGHTP": ["@"],
-        "ATTACHMENTS": ["@"],
-        "CC": ["@"],
-        "SUBJECT": ["@"],
-        "FROM": ["@"],
-        "SORTBY": ["@"],
-        "READ": ["@"],
-        "TO": ["@"],
-        "WORD": ["WORD", "wordlist"],
-        "BODY": ["@"],
-        "FOLDER": ["@"],
-        "RIGHTBRACE": ["@"],
-        "TIME": ["@"],
-        "FORWARDED": ["@"]
-    },
-    "expression2": {
-        "PRINT": ["@"],
-        "OPERAND": ["OPERAND", "expressionterm", "expression2"],
-        "WORD": ["@"],
-        "$": ["@"]
-    },
-    "expressionterm": {"WORD": ["WORD"]},
-    "datevalue": {
-        "DATE": ["DATE"],
-        "YEAR": ["YEAR"],
-        "DAY": ["DAY"],
-        "DATESTRING": ["DATESTRING"]
-    }
-}
+def parse(tokenList):
+
+    input = [token[0] for token in tokenList] + ["$"]
+
+    stack = ["$", "program"]
+    index = 0
+    parseTree = NonTerminalNode("program")
+    currentNonTerminal = parseTree.nodeList
+
+    while len(stack) > 0:
+        top = stack[-1]
+        current_input = input[index]
+        if top == current_input:
+            stack.pop()
+            index += 1
+        else:
+            current = parseTable[top].__getitem__(current_input)
+            current.reverse()
+
+            if current[0] not in '@':
+                stack.pop()
+                stack += current
+                current.reverse()
+            else:
+                stack.pop()
+
+        if not top[0].isupper() and top[0] != "$":
+
+            for instance in NonTerminalNode.instances:
+                if top == instance.name and len(instance.nodeList) == 0:
+                    currentNonTerminal = instance.nodeList
+
+            temp = []
+            for key in current:
+                if key[0].isupper():
+                    for type, value in tokenList[index:]:
+                        if type == key:
+                            temp.append(TerminalNode(key, value))
+                            break
+                elif key[0] == "@":
+                    temp.append(TerminalNode(key, "@"))
+                else:
+                    temp.append(NonTerminalNode(key))
+            currentNonTerminal += temp
+
+    del NonTerminalNode.instances
+
+    return parseTree
