@@ -1,14 +1,5 @@
-filterOrange: {
-to: orange moldcell
-time: 29-01-2021*
-subject: "cont de plata" }
+my:{
+attachments: list pdf
+}
 
-filterFisc: {
-from: fisc jora
-read: no
-body: amenda taxe
-attachments: yes }
-
-filterAll: filterOrange + filterFisc
-
-print(filterAll)
+print(my)

@@ -1,4 +1,4 @@
-from utility.dataTypes import Filter,Print,Expression
+from utility.dataTypes import Filter, Print, Expression
 
 Objects = []
 prevAssignWord = ""
@@ -27,7 +27,7 @@ def find_word_list(node):
 def find_destination_list(node):
     global destinations
     for element in node.nodeList:
-        if element.name == "WORD":
+        if element.name in "WORD EMAIL STAR":
             destinations.append(element.value)
         elif element.name == "destinationvalue":
             find_destination_list(element)
@@ -52,7 +52,7 @@ def find_filter(node):
             find_destination_list(element)
             valuesFilter.append(destinations.copy())
             destinations.clear()
-        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL YEAR DATE EMAIL INT STAR STRING":
+        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL YEAR DATE EMAIL INT STAR STRING SORTVALUE":
             valuesFilter.append(element.value)
         elif element.name in "filter queryvalue attachementsvalue textvalue assignvalue datevalue ":
             find_filter(element)
@@ -112,6 +112,4 @@ def traverse(node):
         for el in elements:
             traverse(el)
         return Objects
-
-
 

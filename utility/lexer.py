@@ -83,7 +83,7 @@ def lexer(sourcecode):
             char = stringProcess(i + 1, sourceCodeChars)
             tokenList.append(("STRING", char))
             i += len(char) + 2
-        elif char.isnumeric() or (char == "*" and sourceCodeChars[i + 1].isnumeric() or sourceCodeChars[i + 1] in 'dy'):
+        elif char.isnumeric() or (char == "*" and (sourceCodeChars[i + 1].isnumeric() or sourceCodeChars[i + 1] in 'dy')):
             type, char = intProcess(i, sourceCodeChars)
             tokenList.append((type, char))
             i += len(char)

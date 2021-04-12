@@ -4,16 +4,18 @@ from utility.helpers import stringTree, printStatements
 from utility.lexer import lexer
 from utility.parseTreeTraversal import traverse
 from utility.parser import parse
-
+from utility.repl import interpretCode
 
 tokenList = lexer("input.txt")
 
-print(tokenList)
+# print(tokenList)
 
 parseTree = parse(tokenList)
 
-#print(stringTree(parseTree,1))
+# print(stringTree(parseTree,1))
 
 statements = traverse(parseTree)
 
-printStatements(statements)
+interpretCode(statements)
+
+# printStatements(statements)
