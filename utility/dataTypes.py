@@ -1,4 +1,6 @@
 import weakref
+
+
 class NonTerminalNode:
     instances = []
     def __init__(self, name):
@@ -17,6 +19,9 @@ class TerminalNode:
 
     def __str__(self):
         return f"{self.name.upper()} " + "\"" + self.value + "\""
+
+
+
 
 class Filter:
     def __init__(self, name, values):

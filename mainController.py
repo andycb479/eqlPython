@@ -8,14 +8,13 @@ from utility.repl import interpretCode
 
 tokenList = lexer("input.txt")
 
-# print(tokenList)
+# pprint(tokenList)
 
 parseTree = parse(tokenList)
 
-# print(stringTree(parseTree,1))
-
 statements = traverse(parseTree)
 
-interpretCode(statements)
 
-# printStatements(statements)
+interpretCode(statements)
+#
+# # printStatements(statements)

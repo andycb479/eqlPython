@@ -1,4 +1,6 @@
+import datetime
 import json
+import time
 from pathlib import Path
 from utility.dataTypes import Filter, Expression, Print
 from pprint import pprint
@@ -60,6 +62,46 @@ def processAttachments(emailField, filterValue):
     return False
 
 
+def processSingleStr(emailField, filterValue):
+    if emailField == "true" and filterValue.lower() == "yes":
+        return True
+    elif emailField == "false" and filterValue.lower() == "no":
+        return True
+    elif filterValue.lower() not in "yes no":
+        if emailField == filterValue:
+            return True
+    return False
+
+
+def processTime(emailField, filterValue):
+
+    emailDate = datetime.datetime.strptime(emailField, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    if filterValue.__contains__("*"):
+
+        dates = filterValue.split("*")
+        if dates.__contains__(""):
+
+            starIndex = dates.index("")
+
+            if starIndex == 0:
+                lower = datetime.datetime.min
+                upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
+            else:
+                lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
+                upper = datetime.datetime.max
+
+        else:
+            lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
+            upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
+
+        if lower <= emailDate <= upper:
+            return True
+
+    elif datetime.datetime.strptime(filterValue, '%d-%m-%Y').date() == emailDate.date():
+        return True
+
+
 def filterEmails(filter):
     res = list()
 
@@ -80,6 +122,10 @@ def filterEmails(filter):
                 ismatch = processStrFields(email["body"]["content"], field, filter)
             elif field in "attachments:":
                 ismatch = processAttachments(email["body"]["attachments"], filter[field])
+            elif field in "read: forwarded: folder:":
+                ismatch = processSingleStr(email["metadata"][temp], filter[field])
+            elif field in "time:":
+                ismatch = processTime(email["metadata"]["date"], filter[field])
 
             if not ismatch:
                 break
@@ -108,10 +154,20 @@ def applyFilter(filter):
 def interpretCode(statements):
     for statement in statements:
         if (isinstance(statement, Filter)):
-            filters[statement.name] = statement.values
+            filters[statement.name] = statement.values # example of adding Filter object to dictionary filters
         elif (isinstance(statement, Expression)):
+
+            #expression processing -> procesExpr()
+
+            #input -> expression (statement)
+
+            #output - > Filter object
+            # + add new filter to filters dictionary filters[newfiltername] = output.values
+
+
             pass
         elif (isinstance(statement, Print)):
             for filter in statement.words:
                 applyFilter(filters[filter])
+
 # Path("utility/filtersdb.json").write_text(json.dumps(filters))

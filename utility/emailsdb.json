@@ -2,14 +2,14 @@
   {
     "metadata": {
       "id": "10192318231f",
-      "date": "2012-04-23T18:25:43.511Z",
+      "date": "2014-04-23T18:25:43.511Z",
       "read": "true",
       "forwarded": "false",
       "folder": "default"
     },
     "header": {
       "to": "moldcell@gmail.com",
-      "from": "",
+      "from": "borea@yahoo.com",
       "cc": "personal@gmail.com",
       "subject": "Accounting details"
     },
@@ -25,9 +25,9 @@
     "metadata": {
       "id": "10192318231f",
       "date": "2012-04-23T18:25:43.511Z",
-      "read": "true",
+      "read": "false",
       "forwarded": "false",
-      "folder": "default"
+      "folder": "job"
     },
     "header": {
       "to": "",
@@ -66,9 +66,9 @@
     "metadata": {
       "id": "10192318231f",
       "date": "2012-04-23T18:25:43.511Z",
-      "read": "true",
-      "forwarded": "false",
-      "folder": "default"
+      "read": "false",
+      "forwarded": "true",
+      "folder": "spam"
     },
     "header": {
       "to": "orange@yahoo.com",
