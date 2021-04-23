@@ -1,9 +1,9 @@
 import datetime
 import json
-import time
 from pathlib import Path
-from utility.dataTypes import Filter, Expression, Print
 from pprint import pprint
+
+from utility.dataTypes import Filter, Expression, Print
 
 emailDataBase = Path("utility/emailsdb.json").read_text()
 filterDataBase = Path("utility/filtersdb.json").read_text()
@@ -73,30 +73,74 @@ def processSingleStr(emailField, filterValue):
     return False
 
 
-def processTime(emailField, filterValue):
+def get_date_from_string_dy(stringdate, day=False, year=False):
+    date_now = datetime.datetime.now()
 
+    if day:
+        days = stringdate.replace("d", "")
+        date = date_now - datetime.timedelta(days=int(days))
+
+    elif year:
+        years = stringdate.replace("y", "")
+        date = date_now - datetime.timedelta(days=int(years) * 365)
+
+    return date
+
+
+def process_date_with_star(emailDate, filterValue):
+
+    dates = filterValue.split("*")
+
+    if dates.__contains__(""):
+
+        starIndex = dates.index("")
+        if starIndex == 0:
+
+            lower = datetime.datetime.min
+            if "d" in dates[1]:
+                upper = get_date_from_string_dy(dates[1], day=True)
+            elif "y" in dates[1]:
+                upper = get_date_from_string_dy(dates[1], year=True)
+            else:
+                upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
+        elif starIndex == 1:
+
+            upper = datetime.datetime.max
+            if "d" in dates[0]:
+                lower = get_date_from_string_dy(dates[0], day=True)
+            elif "y" in dates[0]:
+                lower = get_date_from_string_dy(dates[0], year=True)
+            else:
+                lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
+
+    else:
+        lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
+        upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
+
+    if lower <= emailDate <= upper:
+        return True
+
+
+def process_date_with_dy(emailDate, filterValue):
+    if "d" in filterValue:
+        date = get_date_from_string_dy(filterValue, day=True)
+        if date.date() == emailDate.date():
+            return True
+
+    elif "y" in filterValue:
+        date = get_date_from_string_dy(filterValue, year=True)
+        if date.year == emailDate.year:
+            return True
+
+
+def processTime(emailField, filterValue):
     emailDate = datetime.datetime.strptime(emailField, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     if filterValue.__contains__("*"):
+        return process_date_with_star(emailDate, filterValue)
 
-        dates = filterValue.split("*")
-        if dates.__contains__(""):
-
-            starIndex = dates.index("")
-
-            if starIndex == 0:
-                lower = datetime.datetime.min
-                upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
-            else:
-                lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
-                upper = datetime.datetime.max
-
-        else:
-            lower = datetime.datetime.strptime(dates[0], '%d-%m-%Y')
-            upper = datetime.datetime.strptime(dates[1], '%d-%m-%Y')
-
-        if lower <= emailDate <= upper:
-            return True
+    elif "d" or "y" in filterValue and "*" not in filterValue:
+        return process_date_with_dy(emailDate, filterValue)
 
     elif datetime.datetime.strptime(filterValue, '%d-%m-%Y').date() == emailDate.date():
         return True
@@ -140,11 +184,7 @@ def applyFilter(filter):
     res = list()
 
     if ("to:" in filter) and ("from:" in filter):
-        temp = filter.copy()
-        temp.pop("to:")
-        res.extend(filterEmails(temp))
-        filter.pop("from:")
-        res.extend(filterEmails(filter))
+        raise ValueError("Filter could contain only to or only from rules!")
     else:
         res.extend(filterEmails(filter))
 
@@ -154,16 +194,16 @@ def applyFilter(filter):
 def interpretCode(statements):
     for statement in statements:
         if (isinstance(statement, Filter)):
-            filters[statement.name] = statement.values # example of adding Filter object to dictionary filters
+            filters[statement.name] = statement.values  # example of adding Filter object to dictionary filters
         elif (isinstance(statement, Expression)):
 
-            #expression processing -> procesExpr()
+            print(filters[statement.terms[0]])
+            # expression processing -> procesExpr()
 
-            #input -> expression (statement)
+            # input -> expression (statement)
 
-            #output - > Filter object
+            # output - > Filter object
             # + add new filter to filters dictionary filters[newfiltername] = output.values
-
 
             pass
         elif (isinstance(statement, Print)):

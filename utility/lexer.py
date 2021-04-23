@@ -1,3 +1,6 @@
+import datetime
+import sys
+
 from utility.grammar.tokenDictionary import tokenTypes
 from utility.helpers import open_file
 
@@ -22,11 +25,17 @@ def intProcess(i, sourceCodeChars):
         else:
             break
 
-    if string.__contains__("-"):
-        type = "DATE"
+    if string.__contains__("-") and not string.__contains__("*"):
+        try:
+            datetime.datetime.strptime(string, '%d-%m-%Y')
+            type = "DATE"
+        except ValueError:
+            print('\033[93m'+"Incorrect date or date format, should be DD-MM-YYYY")
+            sys.exit(1)
 
     if string.__contains__("y"):
         type = "YEAR"
+
     if string.__contains__("d"):
         type = "DAY"
 

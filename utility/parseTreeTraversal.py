@@ -52,7 +52,7 @@ def find_filter(node):
             find_destination_list(element)
             valuesFilter.append(destinations.copy())
             destinations.clear()
-        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL YEAR DATE EMAIL INT STAR STRING SORTVALUE":
+        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL DAY YEAR DATE EMAIL INT STAR STRING SORTVALUE":
             valuesFilter.append(element.value)
         elif element.name in "filter queryvalue attachementsvalue textvalue assignvalue datevalue ":
             find_filter(element)
