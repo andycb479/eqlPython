@@ -1,5 +1,8 @@
-from utility.grammar.parsingTable import parseTable
-from utility.dataTypes import NonTerminalNode,TerminalNode
+# from utility.grammar.parsingTable import parseTable
+# from utility.dataTypes import NonTerminalNode,TerminalNode
+from eqlPython.utility.dataTypes import NonTerminalNode, TerminalNode
+from eqlPython.utility.grammar.parsingTable import parseTable
+
 
 def parse(tokenList):
 

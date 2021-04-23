@@ -1,4 +1,5 @@
 from utility.dataTypes import Filter, Print, Expression
+# from eqlPython.utility.dataTypes import Print, Expression, Filter
 
 Objects = []
 prevAssignWord = ""
@@ -10,6 +11,11 @@ termsExpression = []
 assignedExpression = 0
 words = []
 destinations = []
+
+sort_dict = {
+    "PARAMETER": [],
+    "SORTVALUE": []
+}
 
 
 def find_word_list(node):
@@ -35,6 +41,14 @@ def find_destination_list(node):
             return destinations
 
 
+def find_sort_values(node):
+    for element in node.nodeList:
+        if element.name in "SORTBY":
+            continue
+        else:
+            sort_dict[element.name] = element.value
+
+
 def find_filter(node):
     global fieldsFilter
     global valuesFilter
@@ -42,6 +56,11 @@ def find_filter(node):
     for element in node.nodeList:
         if element.name == "LEFTBRACE" or element.name == "RIGHTBRACE":
             continue
+        elif element.name in "SORTBY":
+            fieldsFilter.append(element.value)
+            find_sort_values(node)
+            valuesFilter.append(sort_dict.copy())
+            sort_dict.clear()
         elif element.name in "TO FROM CC FORWARDED READ BODY ATTACHMENTS TIME SUBJECT SORTBY FOLDER":
             fieldsFilter.append(element.value)
         elif element.name in "wordlist":
@@ -52,7 +71,7 @@ def find_filter(node):
             find_destination_list(element)
             valuesFilter.append(destinations.copy())
             destinations.clear()
-        elif element.name in "WORD BOOLVALUE PARAMETER DATE DATESTRING INTERVAL DAY YEAR DATE EMAIL INT STAR STRING SORTVALUE":
+        elif element.name in "WORD BOOLVALUE DATE DATESTRING INTERVAL DAY YEAR DATE EMAIL INT STAR STRING":
             valuesFilter.append(element.value)
         elif element.name in "filter queryvalue attachementsvalue textvalue assignvalue datevalue ":
             find_filter(element)
@@ -112,4 +131,3 @@ def traverse(node):
         for el in elements:
             traverse(el)
         return Objects
-

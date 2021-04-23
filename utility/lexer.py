@@ -1,9 +1,8 @@
 import datetime
 import sys
 
-from utility.grammar.tokenDictionary import tokenTypes
-from utility.helpers import open_file
-
+from eqlPython.utility.grammar.tokenDictionary import tokenTypes
+from eqlPython.utility.helpers import open_file
 
 def stringProcess(i, sourceCodeChars):
     temp = sourceCodeChars[i:]

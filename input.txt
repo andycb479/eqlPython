@@ -1,5 +1,14 @@
 filterFisc: {
+to: jora bra
 sortby: time desc
 }
 
-print(filterFisc)
+filterdoi: {
+to: jora
+sortby: time asc
+}
+
+filtertrei: {
+to: jora
+sortby: name desc
+}
