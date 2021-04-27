@@ -1,6 +1,6 @@
 # from utility.dataTypes import NonTerminalNode,Filter,Print,Expression
 
-from eqlPython.utility.dataTypes import NonTerminalNode, Filter, Print, Expression
+from utility.dataTypes import NonTerminalNode, Filter, Print, Expression
 
 def open_file(path):
     sourceCode = open(path, "r")

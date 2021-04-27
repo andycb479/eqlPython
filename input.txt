@@ -1,14 +1,8 @@
 filterFisc: {
-to: jora bra
-sortby: time desc
+time: 10-11-2021
+}
+filterFisc: {
+attachments: 0..1
 }
 
-filterdoi: {
-to: jora
-sortby: time asc
-}
-
-filtertrei: {
-to: jora
-sortby: name desc
-}
+print(filterFisc)

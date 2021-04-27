@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from pprint import pprint
 
-from eqlPython.utility.dataTypes import Filter, Expression, Print
+from utility.dataTypes import Filter, Expression, Print
 
 emailDataBase = Path("utility/emailsdb.json").read_text()
 filterDataBase = Path("utility/filtersdb.json").read_text()

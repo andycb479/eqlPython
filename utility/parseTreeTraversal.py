@@ -1,5 +1,5 @@
 # from utility.dataTypes import Filter, Print, Expression
-from eqlPython.utility.dataTypes import Print, Expression, Filter
+from utility.dataTypes import Print, Expression, Filter
 
 Objects = []
 prevAssignWord = ""

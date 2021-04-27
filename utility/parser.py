@@ -1,11 +1,10 @@
-# from utility.grammar.parsingTable import parseTable
-# from utility.dataTypes import NonTerminalNode,TerminalNode
-from eqlPython.utility.dataTypes import NonTerminalNode, TerminalNode
-from eqlPython.utility.grammar.parsingTable import parseTable
+import sys
+
+from utility.grammar.parsingTable import parseTable
+from utility.dataTypes import NonTerminalNode, TerminalNode
 
 
 def parse(tokenList):
-
     input = [token[0] for token in tokenList] + ["$"]
 
     stack = ["$", "program"]
@@ -20,6 +19,10 @@ def parse(tokenList):
             stack.pop()
             index += 1
         else:
+            if (current_input not in parseTable[top]):
+                args = [el for el in parseTable[top].keys() if parseTable[top][el][0] != "@"]
+                print('\033[1;31m' + f"{top} Expects as arguments{args}")
+                sys.exit(1)
             current = parseTable[top].__getitem__(current_input)
             current.reverse()
 
@@ -39,7 +42,7 @@ def parse(tokenList):
             temp = []
             for key in current:
                 if key[0].isupper():
-                    for type, value in tokenList[index:]:
+                    for type, value, *other in tokenList[index:]:
                         if type == key:
                             temp.append(TerminalNode(key, value))
                             break
