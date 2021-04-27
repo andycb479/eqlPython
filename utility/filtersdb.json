@@ -1,1 +1,1 @@
-{}
+{"filterFisc": {"to:": ["jora", "bra"], "sortby:": {"PARAMETER": "time", "SORTVALUE": "desc"}}, "filterdoi": {"to:": ["petea"], "sortby:": {"PARAMETER": "time", "SORTVALUE": "asc"}}, "filtertrei": {"to:": ["maria"], "sortby:": {"PARAMETER": "name", "SORTVALUE": "desc"}}, "filterpatru": {"to:": ["vanea"], "sortby:": {"PARAMETER": "name", "SORTVALUE": "desc"}}}

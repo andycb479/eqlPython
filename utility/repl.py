@@ -88,7 +88,6 @@ def get_date_from_string_dy(stringdate, day=False, year=False):
 
 
 def process_date_with_star(emailDate, filterValue):
-
     dates = filterValue.split("*")
 
     if dates.__contains__(""):
@@ -191,13 +190,79 @@ def applyFilter(filter):
     pprint(res, sort_dicts=False)
 
 
+def add_dict(d1, d2):
+    d = {}
+    print(set(list(d1.keys()) + list(d2.keys())))
+    for key in set(list(d1.keys()) + list(d2.keys())):
+        d.setdefault(key, [])
+
+    # for key in set(list(d1.keys()) + list(d2.keys())):
+    #     try:
+    #         d.setdefault(key, []).insert(0, d1[key])
+    #         print("key - ")
+    #         print(d1[key])
+    #     except KeyError:
+    #         pass
+    #
+    #     try:
+    #         d.setdefault(key, []).insert(0, d2[key])
+    #     except KeyError:
+    #         pass
+    print(d)
+    print("---------")
+
+    return d
+
+
+def div_dict(d1, d2):
+    d = d1.copy()
+    return d
+
+
+def process_dict(d):
+
+
+
+
+    return d
+
+
+def check_term(term):
+    for element in filters:
+        if element == term:
+            return True
+    return False
+
+
 def interpretCode(statements):
     for statement in statements:
-        if (isinstance(statement, Filter)):
+        if isinstance(statement, Filter):
             filters[statement.name] = statement.values  # example of adding Filter object to dictionary filters
-        elif (isinstance(statement, Expression)):
+        elif isinstance(statement, Expression):
 
-            print(filters[statement.terms[0]])
+            # pprint(filters)
+            terms = statement.terms
+
+            i = 1
+            prev = filters[terms[0]]
+            while i < len(terms)-1:
+                if not check_term(terms[i+1]):
+                    print("Not existing element")
+                    return
+                if terms[i] == '+':
+                    prev = add_dict(prev, filters[terms[i + 1]])
+                    # prev = process_dict(prev)
+                elif terms[i] == '-':
+                    print("-")
+                    # prev = div_dict(prev, filters[terms[i + 1]])
+                    # prev = divide
+                i = i + 2
+
+            print(prev)
+
+            # prev - resulting filter
+
+            # print(filters[statement.terms[0]])
             # expression processing -> procesExpr()
 
             # input -> expression (statement)
@@ -206,8 +271,8 @@ def interpretCode(statements):
             # + add new filter to filters dictionary filters[newfiltername] = output.values
 
             pass
-        elif (isinstance(statement, Print)):
+        elif isinstance(statement, Print):
             for filter in statement.words:
                 applyFilter(filters[filter])
 
-# Path("utility/filtersdb.json").write_text(json.dumps(filters))
+    Path("utility/filtersdb.json").write_text(json.dumps(filters))

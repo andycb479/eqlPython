@@ -1,5 +1,5 @@
-from utility.dataTypes import Filter, Print, Expression
-# from eqlPython.utility.dataTypes import Print, Expression, Filter
+# from utility.dataTypes import Filter, Print, Expression
+from eqlPython.utility.dataTypes import Print, Expression, Filter
 
 Objects = []
 prevAssignWord = ""
@@ -95,9 +95,7 @@ def traverse(node):
     global prevAssignWord
     global resultWordList
     if hasattr(node, 'nodeList'):
-        elements = []
-        for el in node.nodeList:
-            elements.append(el)
+        elements = node.nodeList
 
         if node.name == "print":
             for el in elements:
@@ -130,4 +128,5 @@ def traverse(node):
 
         for el in elements:
             traverse(el)
+
         return Objects
